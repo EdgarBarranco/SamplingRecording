@@ -12,15 +12,17 @@ class AudioRecorder:
     FORMAT = pyaudio.paInt16
     CHANNELS = 1
     RATE = 44100
-    THRESHOLD = 400  # adjust this to set the threshold for detecting audio
 
-    def __init__(self, device_index=None, filename=None):
+    def __init__(self, device_index=None, filename=None, threshold=400, time_at=1):
         self._stream = None
         self._q = queue.Queue()
         self._stop_event = threading.Event()
         self._thread = threading.Thread(target=self._record)
         self._device_index = device_index
         self._filename = filename
+        self.THRESHOLD = threshold
+        self.TIME_AT = time_at
+
 
     def start(self):
         self._thread.start()
@@ -55,10 +57,11 @@ class AudioRecorder:
 
             # stop recording if audio signal is below threshold for more than 1 second
             if recording and audio_signal < self.THRESHOLD:
-                time.sleep(1)
+                time.sleep(self.TIME_AT)
                 data = self._stream.read(self.CHUNK)
                 audio_signal = np.abs(np.frombuffer(data, dtype=np.int16)).max()
                 if audio_signal < self.THRESHOLD:
+                    time.sleep(self.TIME_AT)
                     filename = self._get_filename()
                     self._save_file(frames, filename)
                     frames = []
@@ -85,6 +88,7 @@ class AudioRecorder:
         wf.setframerate(self.RATE)
         wf.writeframes(b''.join(frames))
         wf.close()
+        print(f'Saved as {filename}')
 
 
 if __name__ == '__main__':
@@ -99,8 +103,19 @@ if __name__ == '__main__':
 
     device_index = int(input('Select input device: '))
     filename = input('Enter filename: ')
+    threshold = input('Enter threshold (400): ')
+    if threshold.isdigit():
+        threshold = int(threshold)
+    else:
+        threshold = 400
 
-    recorder = AudioRecorder(device_index=device_index, filename=filename)
+    time_at = input('Enter seconds to record after threshold (1): ')
+    if time_at.isdigit():
+        time_at = int(time_at)
+    else:
+        time_at = 1
+
+    recorder = AudioRecorder(device_index=device_index, filename=filename, threshold=threshold, time_at=time_at)
     recorder.start()
 
     while True:
