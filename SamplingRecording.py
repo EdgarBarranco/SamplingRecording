@@ -8,7 +8,7 @@ import numpy as np
 import pyaudio
 
 class AudioRecorder:
-    CHUNK = 1024
+    CHUNK = 4096
     FORMAT = pyaudio.paInt16
     CHANNELS = 1
     RATE = 44100
