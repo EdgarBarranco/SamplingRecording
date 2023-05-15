@@ -13,3 +13,9 @@ The filename is incremented for each recording with a custom prefix.
 - Enter the time after threshold to stop recording in seconds. If no time is entered, the default is 1
 
 To exit, press Ctrl+C or Q
+
+## Dependencies
+- Python 3 (tested with 3.10)
+- PyAudio
+- NumPy
+

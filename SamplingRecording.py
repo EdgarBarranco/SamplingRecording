@@ -5,13 +5,13 @@ import time
 import wave
 
 import numpy as np
-import pyaudio
+import pyaudio # PyAudio provides Python bindings for PortAudio, the cross-platform audio I/O library
 
 class AudioRecorder:
     CHUNK = 4096
-    FORMAT = pyaudio.paInt16
-    CHANNELS = 1
-    RATE = 44100
+    FORMAT = pyaudio.paInt16  # 16 bit
+    CHANNELS = 1 # Number of audio channels (1 = mono) (2 = stereo)
+    RATE = 44100 # 44.1 kHz
 
     def __init__(self, device_index=None, filename=None, threshold=400, time_at=1):
         self._stream = None
@@ -108,7 +108,6 @@ if __name__ == '__main__':
         threshold = int(threshold)
     else:
         threshold = 400
-
     time_at = input('Enter seconds to record after threshold (1): ')
     if time_at.isdigit():
         time_at = int(time_at)
